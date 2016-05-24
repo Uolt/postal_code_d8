@@ -2,6 +2,7 @@
 
 namespace Drupal\postal_code\Plugin\Field\FieldFormatter;
 
+
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
 
@@ -17,13 +18,6 @@ use Drupal\Core\Field\FieldItemListInterface;
  * )
  */
 class PostalCodeFormatter extends FormatterBase {
-
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function view(FieldItemListInterface $items, $langcode = NULL) {
-//
-//  }
 
   /**
    * {@inheritdoc}

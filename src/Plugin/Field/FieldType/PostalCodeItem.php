@@ -2,6 +2,7 @@
 
 namespace Drupal\postal_code\Plugin\Field\FieldType;
 
+
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
@@ -9,8 +10,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Component\Utility\Unicode;
-
-
 
 /**
  * Plugin implementation of the 'postal_code' field type.
@@ -63,7 +62,6 @@ class PostalCodeItem extends FieldItemBase {
     $countrylist = CountryManager::getStandardList();
 
     foreach ($postal_code_validation_data as $country => $regex) {
-//      $options[$country] = (string) $countrylist[Unicode::strtoupper($country)];
       $options[$country] = $countrylist[Unicode::strtoupper($country)]->render();
     }
 
@@ -89,17 +87,9 @@ class PostalCodeItem extends FieldItemBase {
         'value' => array(
           'type'      => 'varchar',
           'length'    => '16',
-//          'not null'  => TRUE,
+          'not null'  => TRUE,
         ),
       ),
     );
   }
-
-  /**
-   * {@inheritdoc}
-   */
-//  public function isEmpty() {
-//    $value = $this->get('value')->getValue();
-//    return $value === NULL || $value === '';
-//  }
 }

@@ -63,19 +63,13 @@ class PostalCodeSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-//    $config = \Drupal::configFactory()->getEditable('postal_code.settings');
     $config = $this->config('postal_code.settings');
 
-    ////
-    $config->set('valid_countries', $form_state->getValue('postal_code_valid_countries'))->save();
-    $config->set('validate', $form_state->getValue('postal_code_validate'))->save();
+    // Write settings into config file.
+    $config
+      ->set('valid_countries', $form_state->getValue('postal_code_valid_countries'))
+      ->set('validate', $form_state->getValue('postal_code_validate'))
+      ->save();
   }
 }

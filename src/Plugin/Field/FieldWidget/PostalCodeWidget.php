@@ -2,12 +2,13 @@
 
 namespace Drupal\postal_code\Plugin\Field\FieldWidget;
 
+
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'field_example_text' widget.
+ * Plugin implementation of the 'postal_code' widget.
  *
  * @FieldWidget(
  *   id = "postal_code_any_postal_code_form",

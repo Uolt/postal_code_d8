@@ -18,15 +18,11 @@
  * -for-12-countries/"
  */
 
+
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Url;
-
-
-if (\Drupal::moduleHandler()->moduleExists('content_migrate')) {
-  module_load_include('inc', 'postal_code', 'content_migrate.zipcode');
-}
 
 /**
  * Implements hook_help().

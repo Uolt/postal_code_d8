@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\link\Plugin\migrate\process\d6;
+namespace Drupal\postal_code\Plugin\migrate\process\d6;
 
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\MigrateExecutableInterface;
