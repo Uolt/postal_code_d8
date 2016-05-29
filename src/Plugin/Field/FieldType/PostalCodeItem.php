@@ -10,6 +10,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
  * Plugin implementation of the 'postal_code' field type.
@@ -24,6 +26,22 @@ use Drupal\Component\Utility\Unicode;
  * )
  */
 class PostalCodeItem extends FieldItemBase {
+
+  /**
+   * The PostalCodeValidation service.
+   *
+   * @var \Drupal\postal_code\PostalCodeValidation
+   */
+  protected $postalCodeValidation;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(DataDefinitionInterface $definition, $name = NULL, TypedDataInterface $parent = NULL) {
+    parent::__construct($definition, $name, $parent);
+    $this->postalCodeValidation = \Drupal::getContainer()->get('postal_code.validator');
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -55,9 +73,8 @@ class PostalCodeItem extends FieldItemBase {
     $element = parent::fieldSettingsForm($form, $form_state);
     $settings = $this->getSettings();
 
-
     $options = array('any' => (string) $this->t('Any'));
-    $postal_code_validation_data = postal_code_validation();
+    $postal_code_validation_data = $this->postalCodeValidation->getValidationPatterns();
 
     $countrylist = CountryManager::getStandardList();
 
@@ -87,7 +104,6 @@ class PostalCodeItem extends FieldItemBase {
         'value' => array(
           'type'      => 'varchar',
           'length'    => '16',
-          'not null'  => TRUE,
         ),
       ),
     );

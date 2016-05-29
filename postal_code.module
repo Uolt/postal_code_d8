@@ -23,6 +23,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Url;
+use Drupal\postal_code\PostalCodeValidation;
 
 /**
  * Implements hook_help().
@@ -30,7 +31,7 @@ use Drupal\Core\Url;
 function postal_code_help($route_name, RouteMatchInterface $route_match) {
   if ($route_name == 'help.page.postal_code') {
     $country_list = CountryManager::getStandardList();
-    $postal_code_validation_data = postal_code_validation();
+    $postal_code_validation_data = PostalCodeValidation::getAllowedValidationPatterns();
     $country_list_items = '';
     foreach ($postal_code_validation_data as $country => $info) {
       $country_list_items .= '<li>' . $country_list[Unicode::strtoupper($country)] . '</li>';
@@ -52,44 +53,4 @@ EOT;
 
     return t($helptext);
   }
-}
-
-/**
- * Implements hook_field_is_empty().
- */
-function postal_code_field_is_empty($item, $field) {
-  return empty($item['postal']);
-}
-
-/**
- * Actual validation function.
- */
-function _postal_code_validator($countrycode, $formvalue) {
-  $postal_code_validation_data = postal_code_validation();
-  $regex = $postal_code_validation_data[$countrycode][0];
-  $error_array[] = preg_match($regex, $formvalue);
-  return $error_array;
-}
-
-/**
- * Custom function defining regexes corresponding to different countries.
- */
-function postal_code_validation() {
-  $postal_code_validation_data = array(
-    'us' => array('/^\d{5}(-\d{4})?$/'),
-    'ca' => array('/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ] ?\d[ABCEGHJKLMNPRSTVWXYZ]\d$/'),
-    'gb' => array('/^(GIR|[A-Z]\d[A-Z\d]??|[A-Z]{2}\d[A-Z\d]??)[ ]??(\d[A-Z]{2})$/i'),
-    'de' => array('/^\b((?:0[1-46-9]\d{3})|(?:[1-357-9]\d{4})|(?:[4][0-24-9]\d{3})|(?:[6][013-9]\d{3}))\b$/'),
-    'fr' => array('/^(F-)?((2[A|B])|[0-9]{2})[0-9]{3}$/'),
-    'it' => array('/^(V-|I-)?[0-9]{5}$/'),
-    'au' => array('/^(0[289][0-9]{2})|([1345689][0-9]{3})|(2[0-8][0-9]{2})|(290[0-9])|(291[0-4])|(7[0-4][0-9]{2})|(7[8-9][0-9]{2})$/'),
-    'nl' => array('/^[1-9][0-9]{3}\s?([a-zA-Z]{2})?$/'),
-    'es' => array('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/'),
-    'dk' => array('/^([D-d][K-k])?( |-)?([0-9]{1})?[0-9]{3}$/'),
-    'se' => array('/^(s-|S-){0,1}[0-9]{3}\s?[0-9]{2}$/'),
-    'be' => array('/^[1-9]{1}[0-9]{3}$/'),
-    'in' => array('/^([1-9][0-9]{2}\s?[0-9]{3})$/'),
-    'pl' => array('/^[0-9]{2}-[0-9]{3}$/'),
-  );
-  return $postal_code_validation_data;
 }

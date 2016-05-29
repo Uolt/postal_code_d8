@@ -7,11 +7,60 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Component\Utility\Unicode;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\postal_code\PostalCodeValidation;
+
 
 /**
- * User expire admin settings form.
+ * Postal code admin settings form.
  */
 class PostalCodeSettingsForm extends ConfigFormBase {
+
+  /**
+   * The CountryManager service.
+   *
+   * @var \Drupal\Core\Locale\CountryManager
+   */
+  protected $countryManager;
+
+  /**
+   * The PostalCodeValidation service.
+   *
+   * @var \Drupal\postal_code\PostalCodeValidation
+   */
+  protected $postalCodeValidation;
+
+  /**
+   * The postal code settings.
+   *
+   * @var \Drupal\postal_code\Form\PostalCodeSettingsForm
+   */
+  protected $postalCodeSettings;
+
+  /**
+   * Constructs a \Drupal\postal_code\Form\PostalCodeSettingsFor object.
+   *
+   * @param \Drupal\Core\Locale\CountryManager $country_manager
+   *    The CountryManager service.
+   *
+   * @param \Drupal\postal_code\PostalCodeValidation $postal_code_validation
+   *    The PostalCodeValidation service.
+   */
+  public function __construct(CountryManager $country_manager, PostalCodeValidation $postal_code_validation) {
+    $this->countryManager = $country_manager;
+    $this->postalCodeValidation = $postal_code_validation;
+    $this->postalCodeSettings = $this->config('postal_code.settings');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('country_manager'),
+      $container->get('postal_code.validator')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -31,9 +80,8 @@ class PostalCodeSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $country_list = CountryManager::getStandardList();
-    $config = $this->config('postal_code.settings');
-    $postal_code_validation_data = postal_code_validation();
+    $country_list = $this->countryManager->getStandardList();
+    $postal_code_validation_data = $this->postalCodeValidation->getValidationPatterns();
     $options = array();
 
     foreach ($postal_code_validation_data as $country_code => $info) {
@@ -46,14 +94,14 @@ class PostalCodeSettingsForm extends ConfigFormBase {
       '#size'           => 16,
       '#multiple'       => TRUE,
       '#options'        => $options,
-      '#default_value'  => $config->get('valid_countries'),
+      '#default_value'  => $this->postalCodeSettings->get('valid_countries'),
       '#description'    => '<p>' . t('Select the countr(y/ies) for Postal Code Validation for "Any" field type.') . '</p><p><em>' . t('This is most useful when you have a form that allows, for example, US and Canadian addresses.') . '</em></p><p><strong>' . t('VALIDATION ONLY OCCURS IF THE "VALIDATE" CHECKBOX BELOW IS SELECTED.') . '</strong></p>',
     );
 
     $form['postal_code_validate'] = array(
       '#type'           => 'checkbox',
       '#title'          => t('Validate'),
-      '#default_value'  => $config->get('validate'),
+      '#default_value'  => $this->postalCodeSettings->get('validate'),
       '#description'    => t('Validate submitted postal codes?'),
     );
 
@@ -64,12 +112,12 @@ class PostalCodeSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('postal_code.settings');
-
     // Write settings into config file.
-    $config
+    $this
+      ->postalCodeSettings
       ->set('valid_countries', $form_state->getValue('postal_code_valid_countries'))
       ->set('validate', $form_state->getValue('postal_code_validate'))
       ->save();
+    drupal_set_message($this->t("%name's expiration date has been reset.", array('%name' => )));
   }
 }

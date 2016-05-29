@@ -1,4 +1,4 @@
-user_expire.admin:
+postal_code.admin:
   title: 'Postal Codes'
   description: 'Configuration for the Postal Code module'
   parent: system.admin_config_regional

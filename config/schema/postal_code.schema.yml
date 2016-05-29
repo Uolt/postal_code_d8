@@ -8,5 +8,8 @@ postal_code.settings:
       type: integer
       label: 'Postal code validate'
     valid_countries:
-      type: string
+      type: sequence
       label: 'Postal code valid countries'
+      sequence:
+        type: string
+        label: 'Country code'
